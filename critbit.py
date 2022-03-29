@@ -1,3 +1,5 @@
+"""A module for all critbit related logic."""
+
 from dataclasses import dataclass
 
 @dataclass
@@ -8,7 +10,7 @@ class Criteria:
 
 
 def create_criteria(objects: set, key: str):
-    "Given a list of objects, generate criteria from a specified attribute."
+    """Given a list of objects, generate criteria from a specified attribute."""
     specification = {}
     value = 0
 
@@ -26,8 +28,8 @@ def create_criteria(objects: set, key: str):
         specification=specification
     )
 
-def get_submission(objects: set, criteria: Criteria):
-    "Given a list of objects, generate a submission to match against criteria."
+def create_submission(objects: set, criteria: Criteria):
+    """Given a list of objects, generate a submission to match against criteria."""
     submission = 0
 
     for obj in objects:
@@ -39,5 +41,5 @@ def get_submission(objects: set, criteria: Criteria):
     return submission
 
 def match(submission: int, criteria: Criteria):
-    "Check if submission satisfies criteria"
+    """Check if submission satisfies criteria"""
     return (criteria.value & submission) == submission
