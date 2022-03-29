@@ -89,7 +89,7 @@ def test_invalid_applicant():
         critbit.create_applicant(recipe.ingredients, criteria)
 
 def test_criteria_key_not_found():
-    """Test when a submission key doesn't exist in the criteria."""
+    """Test when a applicant key doesn't exist in the criteria."""
     with pytest.raises(critbit.CriteriaKeyNotFound):
         in_kitchen = (
             Ingredient(name='milk', enabled=True),
