@@ -1,5 +1,5 @@
 """A module for all of critbit related tests."""
-
+import pytest
 from dataclasses import dataclass
 import critbit
 
@@ -70,3 +70,29 @@ def test_match_unsuccessful():
     submission = critbit.create_submission(recipe.ingredients, criteria)
 
     assert not critbit.match(submission, criteria)
+
+def test_invalid_submission():
+    """Test when a submission key doesn't exist in the criteria."""
+    with pytest.raises(critbit.InvalidSubmission):
+        in_kitchen = (
+            Ingredient(name='milk', enabled=True),
+        )
+
+        recipe = Recipe(
+            name='pancakes', 
+            ingredients=(
+                Ingredient(name='oil'),
+            )
+        )
+
+        criteria = critbit.create_criteria(in_kitchen, 'name')
+        critbit.create_submission(recipe.ingredients, criteria)
+
+def test_criteria_key_not_found():
+    """Test when a submission key doesn't exist in the criteria."""
+    with pytest.raises(critbit.CriteriaKeyNotFound):
+        in_kitchen = (
+            Ingredient(name='milk', enabled=True),
+        )
+
+        critbit.create_criteria(in_kitchen, 'namezzz')
