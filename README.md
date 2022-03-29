@@ -1,2 +1,2 @@
 # critbit
-A library for rapidly matching criteria
+A library for rapidly matching boolean criteria
