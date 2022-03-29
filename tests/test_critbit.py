@@ -39,7 +39,7 @@ def test_match_successful():
     )
 
     criteria = critbit.create_criteria(in_kitchen, 'name')
-    submission = critbit.create_submission(recipe.ingredients, criteria)
+    submission = critbit.create_applicant(recipe.ingredients, criteria)
 
     assert critbit.match(submission, criteria)
 
@@ -67,13 +67,13 @@ def test_match_unsuccessful():
     )
 
     criteria = critbit.create_criteria(in_kitchen, 'name')
-    submission = critbit.create_submission(recipe.ingredients, criteria)
+    submission = critbit.create_applicant(recipe.ingredients, criteria)
 
     assert not critbit.match(submission, criteria)
 
-def test_invalid_submission():
-    """Test when a submission key doesn't exist in the criteria."""
-    with pytest.raises(critbit.InvalidSubmission):
+def test_invalid_applicant():
+    """Test when a applicant key doesn't exist in the criteria."""
+    with pytest.raises(critbit.InvalidApplicant):
         in_kitchen = (
             Ingredient(name='milk', enabled=True),
         )
@@ -86,7 +86,7 @@ def test_invalid_submission():
         )
 
         criteria = critbit.create_criteria(in_kitchen, 'name')
-        critbit.create_submission(recipe.ingredients, criteria)
+        critbit.create_applicant(recipe.ingredients, criteria)
 
 def test_criteria_key_not_found():
     """Test when a submission key doesn't exist in the criteria."""

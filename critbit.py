@@ -11,7 +11,7 @@ class Criteria:
 
 
 @dataclass
-class Submission:
+class Applicant:
     value: int
     
 
@@ -19,12 +19,12 @@ class CriteriaKeyNotFound(Exception):
     pass
 
 
-class InvalidSubmission(Exception):
+class InvalidApplicant(Exception):
     pass
 
 
 def create_criteria(objects: set, key: str):
-    """Given a list of objects, generate criteria from a specified attribute."""
+    """Create a criteria from a specified attribute."""
     specification = {}
     value = 0
 
@@ -42,18 +42,19 @@ def create_criteria(objects: set, key: str):
         specification=specification
     )
 
-def create_submission(objects: set, criteria: Criteria):
-    """Given a list of objects, generate a submission to match against criteria."""
+def create_applicant(objects: set, criteria: Criteria):
+    """Create an applicant to evaluate against criteria."""
     value = 0
 
     for obj in objects:
         key = getattr(obj, criteria.key)
         if key not in criteria.specification.keys():
-            raise InvalidSubmission(f'Criteria does not own key: {key}')
+            raise InvalidApplicant(
+                f'criteria does not have applicant key: {key}')
         value += (1 << criteria.specification[key])
 
-    return Submission(value=value)
+    return Applicant(value=value)
 
-def match(submission: Submission, criteria: Criteria):
-    """Check if submission satisfies criteria"""
-    return (criteria.value & submission.value) == submission.value
+def match(applicant: Applicant, criteria: Criteria):
+    """Check if applicant satisfies criteria"""
+    return (criteria.value & applicant.value) == applicant.value
