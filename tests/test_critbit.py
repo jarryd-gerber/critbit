@@ -41,7 +41,7 @@ def test_match_successful():
     criteria = critbit.create_criteria(in_kitchen, 'name')
     submission = critbit.create_applicant(recipe.ingredients, criteria)
 
-    assert critbit.match(submission, criteria)
+    assert critbit.evaluate(submission, criteria)
 
 def test_match_unsuccessful():
     """Test when a match is successful"""
@@ -69,7 +69,7 @@ def test_match_unsuccessful():
     criteria = critbit.create_criteria(in_kitchen, 'name')
     submission = critbit.create_applicant(recipe.ingredients, criteria)
 
-    assert not critbit.match(submission, criteria)
+    assert not critbit.evaluate(submission, criteria)
 
 def test_invalid_applicant():
     """Test when a applicant key doesn't exist in the criteria."""

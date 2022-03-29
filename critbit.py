@@ -55,6 +55,6 @@ def create_applicant(objects: set, criteria: Criteria):
 
     return Applicant(value=value)
 
-def match(applicant: Applicant, criteria: Criteria):
+def evaluate(applicant: Applicant, criteria: Criteria):
     """Check if applicant satisfies criteria"""
     return (criteria.value & applicant.value) == applicant.value
