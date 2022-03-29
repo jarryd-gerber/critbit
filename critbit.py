@@ -2,11 +2,25 @@
 
 from dataclasses import dataclass
 
+
 @dataclass
 class Criteria:
     key: str
     value: int
     specification: dict
+
+
+@dataclass
+class Submission:
+    value: int
+    
+
+class CriteriaKeyNotFound(Exception):
+    pass
+
+
+class InvalidSubmission(Exception):
+    pass
 
 
 def create_criteria(objects: set, key: str):
@@ -20,7 +34,7 @@ def create_criteria(objects: set, key: str):
             if obj.enabled:
                 value += 1 << index
     except AttributeError:
-        raise Exception(f'key does not exist: {key}')
+        raise CriteriaKeyNotFound(f'key not found: {key}')
 
     return Criteria(
         key=key,
@@ -30,16 +44,16 @@ def create_criteria(objects: set, key: str):
 
 def create_submission(objects: set, criteria: Criteria):
     """Given a list of objects, generate a submission to match against criteria."""
-    submission = 0
+    value = 0
 
     for obj in objects:
         key = getattr(obj, criteria.key)
         if key not in criteria.specification.keys():
-            raise Exception(f'specification does not support submission key: {key}')
-        submission += (1 << criteria.specification[key])
+            raise InvalidSubmission(f'Criteria does not own key: {key}')
+        value += (1 << criteria.specification[key])
 
-    return submission
+    return Submission(value=value)
 
-def match(submission: int, criteria: Criteria):
+def match(submission: Submission, criteria: Criteria):
     """Check if submission satisfies criteria"""
-    return (criteria.value & submission) == submission
+    return (criteria.value & submission.value) == submission.value
