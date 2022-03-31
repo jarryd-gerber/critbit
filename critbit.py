@@ -23,31 +23,31 @@ class InvalidApplicant(Exception):
     pass
 
 
-def create_criteria(objects: set, key: str):
+def create_criteria(objects: set, key_attr: str):
     """Create a criteria from a specified attribute."""
     specification = {}
     value = 0
 
     try:
         for index, obj in enumerate(objects):
-            specification[getattr(obj, key)] = index
+            specification[getattr(obj, key_attr)] = index
             if obj.enabled:
                 value += 1 << index
     except AttributeError:
-        raise CriteriaKeyNotFound(f'key not found: {key}')
+        raise CriteriaKeyNotFound(f'key not found: {key_attr}')
 
     return Criteria(
-        key=key,
+        key=key_attr,
         value=value,
         specification=specification
     )
 
-def create_applicant(objects: set, criteria: Criteria):
+def create_applicant(objects: set, key_attr: str, criteria: Criteria):
     """Create an applicant to evaluate against criteria."""
     value = 0
 
     for obj in objects:
-        key = getattr(obj, criteria.key)
+        key = getattr(obj, key_attr)
         if key not in criteria.specification.keys():
             raise InvalidApplicant(
                 f'criteria does not have applicant key: {key}')
