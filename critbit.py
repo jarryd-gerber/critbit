@@ -1,5 +1,4 @@
 """A module for all critbit related logic."""
-
 from dataclasses import dataclass
 
 
@@ -24,7 +23,12 @@ class InvalidApplicant(Exception):
 
 
 def create_criteria(objects: set, key_attr: str):
-    """Create a criteria from a specified attribute."""
+    """Create a criteria from a specified attribute.
+    
+    Args:
+        objects: A collection of Python objects.
+        key_attr: The attribute of each object used for a criteria key.
+    """
     specification = {}
     value = 0
 
@@ -43,7 +47,13 @@ def create_criteria(objects: set, key_attr: str):
     )
 
 def create_applicant(objects: set, key_attr: str, criteria: Criteria):
-    """Create an applicant to evaluate against criteria."""
+    """Create an applicant to evaluate against criteria.
+
+    Args:
+        objects: A collection of Python objects.
+        key_attr: The attribute of each object used for a criteria key.
+        criteria: A criteria object to evaluate against.   
+    """
     value = 0
 
     for obj in objects:
@@ -54,7 +64,12 @@ def create_applicant(objects: set, key_attr: str, criteria: Criteria):
         value += (1 << criteria.specification[key])
 
     return Applicant(value=value)
-
+    
 def evaluate(applicant: Applicant, criteria: Criteria):
-    """Check if applicant satisfies criteria"""
+    """Check if applicant satisfies criteria
+    
+    Args:
+        applicant: Applicant object with value based on criteria.
+        criteria: Criteria object to evaluate against.
+    """
     return (criteria.value & applicant.value) == applicant.value
