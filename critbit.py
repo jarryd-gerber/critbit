@@ -93,9 +93,6 @@ def create_applicants(objects: List[object], key_attr: str, criteria: Criteria) 
 def closest(applicants: List[Applicant], criteria: Criteria) -> Applicant:
     """Find an applicant with the closest match for a given criteria.
 
-    Will return either the closet match OR stop the search
-    when an exact match is found.
-
     Args:
         applicants: Collection of Applicant objects.
         criteria: Criteria object to evaluate against.
@@ -112,9 +109,7 @@ def closest(applicants: List[Applicant], criteria: Criteria) -> Applicant:
 
     for applicant in applicants:
         matches = count_set_bits(applicant.value & criteria.value)
-        if matches == 0:
-            continue
-        elif matches > most:
+        if matches and matches > most:
             most = matches
             closest = applicant
 
