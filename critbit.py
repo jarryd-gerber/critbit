@@ -1,75 +1,124 @@
 """A module for all critbit related logic."""
 from dataclasses import dataclass
+import functools
+from typing import List, Dict
+
+from attr import attr
 
 
 @dataclass
 class Criteria:
     key: str
     value: int
-    specification: dict
+    options: Dict[str, int]
+    objects: List[object]
 
 
 @dataclass
 class Applicant:
+    key: str
     value: int
+    object: object
     
 
-class CriteriaKeyNotFound(Exception):
+class KeyNotFound(Exception):
     pass
 
 
-class InvalidApplicant(Exception):
-    pass
-
-
-def create_criteria(objects: set, key_attr: str):
+def create_criteria(objects: List[object], key_attr: str) -> Criteria:
     """Create a criteria from a specified attribute.
     
     Args:
         objects: A collection of Python objects.
         key_attr: The attribute of each object used for a criteria key.
     """
-    specification = {}
     value = 0
+    options = {}
 
     try:
         for index, obj in enumerate(objects):
-            specification[getattr(obj, key_attr)] = index
-            if obj.enabled:
-                value += 1 << index
+            key = getattr(obj, key_attr)
+            options[key] = index
+            value += 1 << options[key]
     except AttributeError:
-        raise CriteriaKeyNotFound(f'key not found: {key_attr}')
+        raise KeyNotFound(f'key not found: {key_attr}')
 
     return Criteria(
         key=key_attr,
         value=value,
-        specification=specification
+        options=options,
+        objects=objects
     )
 
-def create_applicant(objects: set, key_attr: str, criteria: Criteria):
-    """Create an applicant to evaluate against criteria.
+def create_applicant(parent: object, key_attr: str, criteria: Criteria) -> Applicant:
+    """Create an applicant from a list of criterion.
 
     Args:
         objects: A collection of Python objects.
-        key_attr: The attribute of each object used for a criteria key.
+        key_attr: The attribute of each object used for a criterion.
         criteria: A criteria object to evaluate against.   
     """
     value = 0
+    attrs = key_attr.split('.')
+    children = getattr(parent, attrs[0])
+
+    try:
+        for obj in children:
+            key = getattr(obj, attrs[1])
+            if key not in criteria.options.keys():
+                continue
+            value += (1 << criteria.options[key])
+    except AttributeError:
+        raise KeyNotFound(f'key not found: {key_attr}')
+
+    return Applicant(
+        key=key_attr,
+        value=value,
+        object=parent
+    )
+
+def create_applicants(objects: List[object], key_attr: str, criteria: Criteria) -> List[Applicant]:
+    """Create a collection of applicants from input objects.
+
+    Args:
+        objects: A collection of Python objects.
+        key_attr: The object attribute to match against criteria.
+        criteria: A criteria object to evaluate against.   
+    """
+    applicants = []
 
     for obj in objects:
-        key = getattr(obj, key_attr)
-        if key not in criteria.specification.keys():
-            raise InvalidApplicant(
-                f'criteria does not have applicant key: {key}')
-        value += (1 << criteria.specification[key])
+        applicants.append(
+            create_applicant(obj, key_attr, criteria)) 
 
-    return Applicant(value=value)
-    
-def evaluate(applicant: Applicant, criteria: Criteria):
-    """Check if applicant satisfies criteria
-    
+    return applicants
+
+def closest(applicants: List[Applicant], criteria: Criteria) -> Applicant:
+    """Find an applicant with the closest match for a given criteria.
+
+    Will return either the closet match OR stop the search
+    when an exact match is found.
+
     Args:
-        applicant: Applicant object with value based on criteria.
+        applicants: Collection of Applicant objects.
         criteria: Criteria object to evaluate against.
     """
-    return (criteria.value & applicant.value) == applicant.value
+    most = 0
+    closest = None
+
+    def count_set_bits(n):
+        count = 0
+        while n:
+            n &= n - 1
+            count += 1
+        return count
+
+    for applicant in applicants:
+        matches = count_set_bits(applicant.value & criteria.value)
+        if matches == 0:
+            continue
+        elif matches > most:
+            most = matches
+            closest = applicant
+
+    return closest
