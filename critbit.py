@@ -1,9 +1,6 @@
 """A module for all critbit related logic."""
 from dataclasses import dataclass
-import functools
 from typing import List, Dict
-
-from attr import attr
 
 
 @dataclass
