@@ -1,8 +1,12 @@
 # critbit
-A library for rapidly matching boolean criteria
+Search objects based on criteria, fast.
 
 
-## usage
+## Usage
+
+Eg.
+
+Given a collection of required Features, find the Vehicle that most closely matches those requirements.
 ```
 In [51]:     @dataclass
     ...:     class Feature:
