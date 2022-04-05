@@ -100,6 +100,7 @@ def closest(applicants: List[Applicant], criteria: Criteria) -> Applicant:
     most = 0
     closest = None
 
+    # Brian Kernighan bit counting
     def count_set_bits(n):
         count = 0
         while n:
